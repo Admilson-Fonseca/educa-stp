@@ -1,3 +1,9 @@
+/**
+ * @file server.js
+ * @description Ponto de entrada da API RESTful para o ecossistema EduSTP.
+ * @course Web Services - Engenharia Informática
+ */
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -5,46 +11,52 @@ require('dotenv').config();
 
 const app = express();
 
-// Middlewares Globais
+// Configuração de Middlewares Globais de Ciclo de Vida HTTP
 app.use(cors());
 app.use(express.json());
 
-// 🔌 LIGAÇÃO AO MONGODB
+// Conexão à Camada de Persistência (MongoDB Atlas)
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ Conectado ao MongoDB com sucesso!'))
-  .catch(err => console.error('❌ Erro ao conectar ao MongoDB:', err));
+  .then(() => console.log('✅ Conexão ao MongoDB estabelecida com sucesso.'))
+  .catch(err => console.error('❌ Falha na inicialização da conexão ao MongoDB:', err));
 
-// 📝 MODELO DE DADOS (Esquema para o MongoDB)
+// Definição do Esquema (Schema) e Mapeamento Objeto-Documental (ODM)
 const InstituicaoSchema = new mongoose.Schema({
   nome: { type: String, required: true },
   regiao: { type: String, required: true },
   tipo: { type: String, required: true },
-  cursos: [String] // Array de strings para os cursos
+  cursos: [String] 
 });
 const Instituicao = mongoose.model('Instituicao', InstituicaoSchema);
 
-// 🛡️ SEGURANÇA: Middleware de API Key (Fácil de explicar na defesa!)
+/**
+ * Middleware de Segurança Perimetral
+ * Intervém no ciclo de requisição para validar a presença e exatidão da credencial X-API-Key.
+ */
 const verificarApiKey = (req, res, next) => {
-  const chaveCliente = req.header('X-API-Key'); // O cliente envia no Header
+  const chaveCliente = req.header('X-API-Key'); 
   
   if (!chaveCliente || chaveCliente !== process.env.API_KEY) {
-    return res.status(401).json({ erro: 'Acesso negado. API Key inválida ou ausente.' });
+    return res.status(401).json({ erro: 'Acesso negado. Credencial API Key inválida ou ausente.' });
   }
-  next(); // Chave correta! Avança para a rota.
+  next(); 
 };
 
 // ==========================================
-// 🛣️ ROTAS DA API (CRUD + Pesquisa)
+// DEFINIÇÃO DOS ENDPOINTS DA API (CRUD)
 // ==========================================
 
-// 1. LISTAR TODAS / PESQUISAR (GET) -> Alinhado com o teu botão "Buscar"
+/**
+ * Endpoint: Listagem Geral e Procura Filtrada
+ * Método: GET /api/instituicoes
+ */
 app.get('/api/instituicoes', verificarApiKey, async (req, res) => {
   try {
     const { busca, regiao } = req.query;
     let filtro = {};
 
     if (busca) {
-      // Procura por nome ou curso (ignora maiúsculas/minúsculas)
+      // Executa varredura parcial por expressões regulares insensíveis a maiúsculas/minúsculas
       filtro.$or = [
         { nome: { $regex: busca, $options: 'i' } },
         { cursos: { $regex: busca, $options: 'i' } }
@@ -57,52 +69,64 @@ app.get('/api/instituicoes', verificarApiKey, async (req, res) => {
     const resultados = await Instituicao.find(filtro);
     res.json(resultados);
   } catch (erro) {
-    res.status(500).json({ erro: 'Erro ao buscar dados.' });
+    res.status(500).json({ erro: 'Erro interno ao processar a consulta.' });
   }
 });
 
-// 2. CRIAR NOVA INSTITUIÇÃO (POST) -> Botão "Guardar Dados"
+/**
+ * Endpoint: Persistência de Novas Entidades
+ * Método: POST /api/instituicoes
+ */
 app.post('/api/instituicoes', verificarApiKey, async (req, res) => {
   try {
     const novaInstituicao = new Instituicao(req.body);
     await novaInstituicao.save();
     res.status(201).json(novaInstituicao);
   } catch (erro) {
-    res.status(400).json({ erro: 'Erro ao guardar a instituição.' });
+    res.status(400).json({ erro: 'Dados de submissão inconsistentes com as restrições do modelo.' });
   }
 });
 
-// 3. ATUALIZAR UMA INSTITUIÇÃO (PUT) -> Botão "Editar"
+/**
+ * Endpoint: Atualização Integral/Parcial de Registos Existentes
+ * Método: PUT /api/instituicoes/:id
+ */
 app.put('/api/instituicoes/:id', verificarApiKey, async (req, res) => {
   try {
     const atualizada = await Instituicao.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(atualizada);
   } catch (erro) {
-    res.status(400).json({ erro: 'Erro ao atualizar dados.' });
+    res.status(400).json({ erro: 'Falha na mutação dos dados ou identificador inválido.' });
   }
 });
 
-// 4. ELIMINAR UMA INSTITUIÇÃO (DELETE) -> Botão "Eliminar"
+/**
+ * Endpoint: Supressão Crítica de Registos
+ * Método: DELETE /api/instituicoes/:id
+ */
 app.delete('/api/instituicoes/:id', verificarApiKey, async (req, res) => {
   try {
     await Instituicao.findByIdAndDelete(req.params.id);
-    res.json({ mensagem: 'Instituição eliminada com sucesso!' });
+    res.json({ mensagem: 'Entidade removida com sucesso da base de dados.' });
   } catch (erro) {
-    res.status(500).json({ erro: 'Erro ao eliminar instituição.' });
+    res.status(500).json({ erro: 'Erro interno ao tentar remover o registo especificado.' });
   }
 });
 
-// 5. OBTER DETALHES DE UMA (GET por ID)
+/**
+ * Endpoint: Consulta Singular por Identificador Único
+ * Método: GET /api/instituicoes/:id
+ */
 app.get('/api/instituicoes/:id', verificarApiKey, async (req, res) => {
   try {
     const instituicao = await Instituicao.findById(req.params.id);
-    if (!instituicao) return res.status(404).json({ erro: 'Não encontrada.' });
+    if (!instituicao) return res.status(404).json({ erro: 'O recurso solicitado não foi localizado.' });
     res.json(instituicao);
   } catch (erro) {
-    res.status(500).json({ erro: 'Erro ao obter detalhes.' });
+    res.status(500).json({ erro: 'Erro interno na extração dos metadados do recurso.' });
   }
 });
 
-// INICIAR O SERVIDOR
+// Inicialização do Escutador de Eventos de Rede da Aplicação
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Servidor a correr na porta ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Serviço HTTP ativo e operacional na porta ${PORT}`));

@@ -1,4 +1,10 @@
-/* Definição de Variáveis de Cor (Tema STP) */
+/**
+ * @file estilo.css
+ * @description Definições estilísticas e estilização estrutural do cliente web (EduSTP).
+ * @course Web Services - Engenharia Informática
+ */
+
+/* Definição de Variáveis de Ambiente Cromático (Tema Identitário STP) */
 :root {
     --verde-principal: #059669; /* emerald-600 */
     --verde-escuro: #047857;    /* emerald-700 */
@@ -8,14 +14,14 @@
     --borda-suave: #f3f4f6;     /* gray-100 */
 }
 
-/* Corpo e Fundo */
+/* Configurações Globais do Corpo do Documento */
 body.bg-custom-main {
     background-color: var(--fundo-cinza);
     color: var(--texto-escuro);
     font-family: ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Barra de Navegação */
+/* Elementos de Navegação Superior (Header / Navbar) */
 .navbar {
     background-color: var(--verde-escuro);
     color: white;
@@ -33,7 +39,7 @@ body.bg-custom-main {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Painéis (Cards Brancos) */
+/* Componentes de Interface de Utilizador (Módulos / Painéis) */
 .card-painel {
     background-color: white;
     padding: 1.5rem;
@@ -53,7 +59,7 @@ body.bg-custom-main {
     color: #374151;
 }
 
-/* Inputs e Caixas de Texto */
+/* Campos de Entrada de Dados (Formulários e Inputs) */
 .input-custom {
     width: 100%;
     padding: 0.75rem;
@@ -68,7 +74,7 @@ body.bg-custom-main {
 }
 .input-custom-sm {
     width: 100%;
-    padding: 0.75rem; /* Aumentado para dar a mesma altura elegante do primeiro print */
+    padding: 0.75rem; 
     border: 1px solid #e5e7eb;
     border-radius: 0.5rem;
     outline: none;
@@ -78,7 +84,7 @@ body.bg-custom-main {
     transition: all 0.2s;
 }
 
-/* Garante que o campo de texto dos cursos também herda a altura correta */
+/* Customização de Elementos Multilinhas (Textarea) */
 textarea.input-custom-sm {
     padding: 0.5rem 0.75rem;
 }
@@ -91,7 +97,7 @@ textarea.input-custom-sm {
     margin-bottom: 0.25rem;
 }
 
-/* Botões */
+/* Componentes de Ação Semântica (Botões e Gatilhos) */
 .btn-primary {
     background-color: var(--verde-principal);
     color: white;

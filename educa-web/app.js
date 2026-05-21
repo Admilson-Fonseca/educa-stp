@@ -1,10 +1,16 @@
-// Configurações Globais do Cliente
+/**
+ * @file app.js
+ * @description Lógica de controlo do cliente web para consumo da API RESTful EduSTP.
+ * @course Web Services - Engenharia Informática
+ */
+
+// Definição de constantes de comunicação com o serviço e estado global
 const API_URL = 'http://localhost:5000/api/instituicoes';
 const API_KEY = 'STP_SECRET_2026'; 
 
 let idInstituicaoEmEdicao = null;
 
-// Seletores Corretos por ID Nativo
+// Mapeamento de elementos do Modelo de Objetos do Documento (DOM)
 const inputBusca = document.getElementById('inputBusca');
 const selectRegiaoBusca = document.getElementById('selectRegiaoBusca');
 const btnBuscar = document.getElementById('btnBuscar');
@@ -18,7 +24,9 @@ const txtCursos = document.getElementById('txtCursos');
 const btnGuardar = document.getElementById('btnGuardar');
 const containerCards = document.getElementById('containerCards');
 
-// 1. CARREGAR / BUSCAR DADOS (MÉTODO GET)
+/**
+ * Efetua a requisição de leitura (MÉTODO GET) com parâmetros de filtragem.
+ */
 async function carregarInstituicoes() {
     const termoBusca = inputBusca.value;
     const regiaoBusca = selectRegiaoBusca.value;
@@ -34,16 +42,20 @@ async function carregarInstituicoes() {
             headers: { 'X-API-Key': API_KEY }
         });
 
-        if (!resposta.ok) throw new Error('Erro na autenticação ou na busca.');
+        if (!resposta.ok) throw new Error('Falha na autenticação ou na resposta do servidor.');
 
         const dados = await resposta.json();
         renderizarCards(dados);
     } catch (erro) {
-        containerCards.innerHTML = `<p class="text-red-500 text-center py-8">❌ Erro ao carregar dados: Server Offline</p>`;
+        console.error("Transmissão interrompida:", erro);
+        containerCards.innerHTML = `<p class="text-red-500 text-center py-8">❌ Erro ao carregar dados: Server Offline ou Falha na Autenticação</p>`;
     }
 }
 
-// 2. GUARDAR DADOS (MÉTODO POST OU PUT)
+/**
+ * Submete os dados do formulário para persistência (MÉTODO POST ou PUT).
+ * @param {Event} e - Objeto de evento de submissão do formulário.
+ */
 async function guardarDados(e) {
     e.preventDefault(); 
 
@@ -77,7 +89,7 @@ async function guardarDados(e) {
             body: JSON.stringify(dadosForm)
         });
 
-        if (!resposta.ok) throw new Error('Erro ao submeter os dados.');
+        if (!resposta.ok) throw new Error('Falha na persistência dos dados submetidos.');
 
         alert(idInstituicaoEmEdicao ? '✅ Atualizado com sucesso!' : '✅ Registado com sucesso!');
         limparFormulario();
@@ -87,7 +99,10 @@ async function guardarDados(e) {
     }
 }
 
-// 3. ELIMINAR INSTITUIÇÃO (MÉTODO DELETE)
+/**
+ * Remove um registo da base de dados através do identificador único (MÉTODO DELETE).
+ * @param {string} id - Identificador único da entidade.
+ */
 async function eliminarInstituicao(id) {
     if (!confirm('Tens a certeza que desejas eliminar esta instituição de STP?')) return;
 
@@ -97,7 +112,7 @@ async function eliminarInstituicao(id) {
             headers: { 'X-API-Key': API_KEY }
         });
 
-        if (!resposta.ok) throw new Error('Não foi possível eliminar.');
+        if (!resposta.ok) throw new Error('Operação de remoção rejeitada pelo serviço.');
 
         alert('🗑️ Eliminada com sucesso!');
         carregarInstituicoes();
@@ -106,7 +121,9 @@ async function eliminarInstituicao(id) {
     }
 }
 
-// 4. PREPARAR EDIÇÃO (PREENCHE O FORMULÁRIO DO CRUD)
+/**
+ * Prepara a interface do utilizador para modificação de dados (Estado de Edição).
+ */
 function prepararEdicao(id, nome, regiao, tipo, cursos) {
     idInstituicaoEmEdicao = id;
     inputNome.value = nome;
@@ -115,11 +132,13 @@ function prepararEdicao(id, nome, regiao, tipo, cursos) {
     txtCursos.value = cursos;
     
     btnGuardar.textContent = "Atualizar Dados";
-    // Troca dinamicamente para estilo azul de edição usando estilos explícitos fáceis de entender
     btnGuardar.style.backgroundColor = "#2563eb"; 
 }
 
-// AUXILIARES: CONSTRUIR OS CARDS DINAMICAMENTE
+/**
+ * Renderiza dinamicamente os componentes visuais na árvore do DOM.
+ * @param {Array} instituicoes - Coleção de objetos retornada pela API.
+ */
 function renderizarCards(instituicoes) {
     containerCards.innerHTML = ''; 
 
@@ -141,8 +160,8 @@ function renderizarCards(instituicoes) {
                     <div class="mt-3">${cursosBadges}</div>
                 </div>
                 <div class="flex justify-end gap-2 mt-6 border-t pt-3">
-                    <button onclick="prepararEdicao('${inst._id}', '${inst.nome}', '${inst.regiao}', '${inst.tipo}', '${inst.cursos.join(', ')}')" class="text-sm text-emerald-600 hover:text-emerald-800 font-medium px-3 py-1">Editar</button>
-                    <button onclick="eliminarInstituicao('${inst._id}')" class="text-sm text-red-600 hover:text-red-800 font-medium px-3 py-1">Eliminar</button>
+                    <button onclick="prepararEdicao('${inst._id}', '${inst.nome}', '${inst.regiao}', '${inst.tipo}', '${inst.cursos.join(', ')}')" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold px-3 py-1.5 rounded-lg transition-colors">Editar</button>
+                    <button onclick="eliminarInstituicao('${inst._id}')" class="text-xs bg-red-50 text-red-700 hover:bg-red-100 font-semibold px-3 py-1.5 rounded-lg transition-colors">Eliminar</button>
                 </div>
             </div>
         `;
@@ -150,14 +169,17 @@ function renderizarCards(instituicoes) {
     });
 }
 
+/**
+ * Restaura o estado original do formulário de inserção.
+ */
 function limparFormulario() {
     idInstituicaoEmEdicao = null;
     formGerir.reset();
     btnGuardar.textContent = "Guardar Dados";
-    btnGuardar.style.backgroundColor = ""; // Restaura para a cor original do style.css
+    btnGuardar.style.backgroundColor = ""; 
 }
 
-// Configuração dos Event Listeners do Cliente
+// Vinculação de escutas de eventos (Event Listeners)
 btnBuscar.addEventListener('click', carregarInstituicoes);
 btnLimpar.addEventListener('click', () => {
     inputBusca.value = '';
@@ -166,5 +188,5 @@ btnLimpar.addEventListener('click', () => {
 });
 formGerir.addEventListener('submit', guardarDados);
 
-// Executa automaticamente ao abrir o ecrã
+// Inicialização automatizada da interface
 window.onload = carregarInstituicoes;
