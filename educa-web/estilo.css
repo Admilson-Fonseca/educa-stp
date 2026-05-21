@@ -1,0 +1,117 @@
+/* Definição de Variáveis de Cor (Tema STP) */
+:root {
+    --verde-principal: #059669; /* emerald-600 */
+    --verde-escuro: #047857;    /* emerald-700 */
+    --verde-badge: #065f46;     /* emerald-800 */
+    --fundo-cinza: #f9fafb;     /* gray-50 */
+    --texto-escuro: #1f2937;    /* gray-800 */
+    --borda-suave: #f3f4f6;     /* gray-100 */
+}
+
+/* Corpo e Fundo */
+body.bg-custom-main {
+    background-color: var(--fundo-cinza);
+    color: var(--texto-escuro);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Barra de Navegação */
+.navbar {
+    background-color: var(--verde-escuro);
+    color: white;
+}
+.logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+.badge-status {
+    font-size: 0.75rem;
+    background-color: var(--verde-badge);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Painéis (Cards Brancos) */
+.card-painel {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--borda-suave);
+}
+.subtitulo-painel {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.titulo-seccao {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #374151;
+}
+
+/* Inputs e Caixas de Texto */
+.input-custom {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    outline: none;
+    transition: all 0.2s;
+}
+.input-custom:focus, .input-custom-sm:focus {
+    border-color: var(--verde-principal);
+    box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
+}
+.input-custom-sm {
+    width: 100%;
+    padding: 0.75rem; /* Aumentado para dar a mesma altura elegante do primeiro print */
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    outline: none;
+    font-size: 0.875rem;
+    background-color: #fff;
+    color: var(--texto-escuro);
+    transition: all 0.2s;
+}
+
+/* Garante que o campo de texto dos cursos também herda a altura correta */
+textarea.input-custom-sm {
+    padding: 0.5rem 0.75rem;
+}
+.label-form {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+/* Botões */
+.btn-primary {
+    background-color: var(--verde-principal);
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+.btn-primary:hover {
+    background-color: var(--verde-escuro);
+}
+.btn-secondary {
+    background-color: #e5e7eb;
+    color: #374151;
+    font-weight: 500;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+.btn-secondary:hover {
+    background-color: #d1d5db;
+}

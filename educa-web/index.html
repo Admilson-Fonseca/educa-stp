@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSTP - Gestão Escolar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body class="bg-custom-main">
+
+    <nav class="navbar shadow-md p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="logo">🎓 EduSTP</h1>
+            <span class="badge-status">Chave API Ativa</span>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <section class="card-painel mb-8">
+            <h2 class="subtitulo-painel mb-3">Pesquisar no Sistema</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="text" id="inputBusca" placeholder="Nome da escola ou curso (ex: Informática)..." class="input-custom">
+                
+                <select id="selectRegiaoBusca" class="input-custom">
+                    <option value="">Todas as Regiões (STP)</option>
+                    <option value="Água Grande">Água Grande</option>
+                    <option value="Mé-Zóchi">Mé-Zóchi</option>
+                    <option value="Cantagalo">Cantagalo</option>
+                    <option value="Lobata">Lobata</option>
+                    <option value="Lembá">Lembá</option>
+                    <option value="Caué">Caué</option>
+                    <option value="Região Autónoma do Príncipe">Região Autónoma do Príncipe</option>
+                </select>
+
+                <div class="flex gap-2">
+                    <button id="btnBuscar" class="btn-primary w-full">Buscar</button>
+                    <button id="btnLimpar" class="btn-secondary">Limpar</button>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2">
+                <h2 class="titulo-seccao mb-4">Instituições Encontradas</h2>
+                
+                <div id="containerCards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <p class="text-gray-500 text-center py-8">A carregar instituições...</p>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="titulo-seccao mb-4">Gerir Instituição</h2>
+                <div class="card-painel">
+                    <form id="formGerir" class="space-y-4">
+                        <div>
+                            <label class="label-form">Nome da Escola</label>
+                            <input type="text" id="inputNome" class="input-custom-sm">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="label-form">Região</label>
+                                <input type="text" id="inputRegiao" placeholder="Ex: Água Grande" class="input-custom-sm">
+                            </div>
+                            <div>
+                                <label class="label-form">Tipo</label>
+                                <input type="text" id="inputTipo" placeholder="Ex: Superior" class="input-custom-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="label-form">Cursos (separados por vírgula)</label>
+                            <textarea id="txtCursos" rows="2" placeholder="Ex: Direito, Agronomia" class="input-custom-sm"></textarea>
+                        </div>
+                        <button type="submit" id="btnGuardar" class="btn-primary w-full text-sm shadow-sm">
+                            Guardar Dados
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

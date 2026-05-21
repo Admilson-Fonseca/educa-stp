@@ -1,0 +1,19 @@
+{
+  "name": "educa-stp-api",
+  "version": "1.0.0",
+  "description": "Servidor web RESTful para Gestão de Instituições de Ensino em São Tomé e Príncipe",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Admilson Bragança",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.6.2"
+  }
+}
