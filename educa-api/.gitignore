@@ -1,2 +1,5 @@
+
 node_modules/
 .env
+educa-api/.env
+educa-api/node_modules/

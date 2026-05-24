@@ -17,8 +17,8 @@ app.use(express.json());
 
 // Conexão à Camada de Persistência (MongoDB Atlas)
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ Conexão ao MongoDB estabelecida com sucesso.'))
-  .catch(err => console.error('❌ Falha na inicialização da conexão ao MongoDB:', err));
+  .then(() => console.log(' Conexão ao MongoDB estabelecida com sucesso!'))
+  .catch(err => console.error(' Falha na inicialização da conexão ao MongoDB:', err));
 
 // Definição do Esquema (Schema) e Mapeamento Objeto-Documental (ODM)
 const InstituicaoSchema = new mongoose.Schema({
@@ -129,4 +129,4 @@ app.get('/api/instituicoes/:id', verificarApiKey, async (req, res) => {
 
 // Inicialização do Escutador de Eventos de Rede da Aplicação
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Serviço HTTP ativo e operacional na porta ${PORT}`));
+app.listen(PORT, () => console.log(` Serviço HTTP ativo e operacional na porta ${PORT}`));

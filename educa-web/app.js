@@ -48,7 +48,11 @@ async function carregarInstituicoes() {
         renderizarCards(dados);
     } catch (erro) {
         console.error("Transmissão interrompida:", erro);
-        containerCards.innerHTML = `<p class="text-red-500 text-center py-8">❌ Erro ao carregar dados: Server Offline ou Falha na Autenticação</p>`;
+        containerCards.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-exclamation-triangle text-red-500 text-2xl mb-2"></i>
+                <p class="text-red-500 font-medium">Erro ao carregar dados: Server Offline ou Falha na Autenticação</p>
+            </div>`;
     }
 }
 
@@ -143,12 +147,16 @@ function renderizarCards(instituicoes) {
     containerCards.innerHTML = ''; 
 
     if (instituicoes.length === 0) {
-        containerCards.innerHTML = '<p class="text-gray-500 col-span-2 text-center py-8">Nenhuma instituição encontrada em STP.</p>';
+        containerCards.innerHTML = `
+            <div class="col-span-2 text-center py-8">
+                <i class="fas fa-folder-open text-gray-300 text-3xl mb-2"></i>
+                <p class="text-gray-500">Nenhuma instituição localizada no território nacional.</p>
+            </div>`;
         return;
     }
 
     instituicoes.forEach(inst => {
-        const cursosBadges = inst.cursos.map(c => `<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded inline-block mr-1 mb-1">${c}</span>`).join('');
+        const cursosBadges = inst.cursos.map(c => `<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded inline-block mr-1 mb-1"><i class="fas fa-book-reader mr-1 text-gray-400"></i>${c}</span>`).join('');
         const corTipo = inst.tipo.toLowerCase().includes('superior') ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800';
 
         const card = `
@@ -156,12 +164,18 @@ function renderizarCards(instituicoes) {
                 <div>
                     <span class="text-xs ${corTipo} font-semibold px-2 py-1 rounded">${inst.tipo}</span>
                     <h3 class="text-lg font-bold text-gray-800 mt-2">${inst.nome}</h3>
-                    <p class="text-sm text-gray-500 mt-1">📍 ${inst.regiao}</p>
-                    <div class="mt-3">${cursosBadges}</div>
+                    <p class="text-sm text-gray-500 mt-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-map-marker-alt text-emerald-600"></i> ${inst.regiao}
+                    </p>
+                    <div class="mt-4">${cursosBadges}</div>
                 </div>
                 <div class="flex justify-end gap-2 mt-6 border-t pt-3">
-                    <button onclick="prepararEdicao('${inst._id}', '${inst.nome}', '${inst.regiao}', '${inst.tipo}', '${inst.cursos.join(', ')}')" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold px-3 py-1.5 rounded-lg transition-colors">Editar</button>
-                    <button onclick="eliminarInstituicao('${inst._id}')" class="text-xs bg-red-50 text-red-700 hover:bg-red-100 font-semibold px-3 py-1.5 rounded-lg transition-colors">Eliminar</button>
+                    <button onclick="prepararEdicao('${inst._id}', '${inst.nome}', '${inst.regiao}', '${inst.tipo}', '${inst.cursos.join(', ')}')" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button onclick="eliminarInstituicao('${inst._id}')" class="text-xs bg-red-50 text-red-700 hover:bg-red-100 font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </button>
                 </div>
             </div>
         `;

@@ -1,88 +1,159 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduSTP - Gestão Escolar</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="estilo.css">
-</head>
-<body class="bg-custom-main">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduSTP - Sistema Integrado de Consulta Educacional</title>
 
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>"
+    />
+
+    <link rel="stylesheet" href="estilo.css" />
+  </head>
+  
+  <body class="bg-custom-main">
     <nav class="navbar shadow-md p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="logo">🎓 EduSTP</h1>
-            <span class="badge-status">Chave API Ativa</span>
+      <div class="container mx-auto flex justify-between items-center">
+        <div
+          class="flex items-center gap-2 logo text-white font-bold tracking-wide">
+          <i class="fas fa-university text-emerald-400 text-xl drop-shadow-[0_0_6px_rgba(52,211,153,0.5)]"></i>
+          <span>Edu<span class="text-emerald-400">STP</span></span>
         </div>
+        <span class="badge-status flex items-center gap-1.5">
+          <span class="h-2 w-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+          Chave API Ativa
+        </span>
+      </div>
     </nav>
 
-    <main class="container mx-auto p-4 md:p-8">
-        
-        <section class="card-painel mb-8">
-            <h2 class="subtitulo-painel mb-3">Pesquisar no Sistema</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input type="text" id="inputBusca" placeholder="Nome da escola ou curso (ex: Informática)..." class="input-custom">
-                
-                <select id="selectRegiaoBusca" class="input-custom">
-                    <option value="">Todas as Regiões (STP)</option>
-                    <option value="Água Grande">Água Grande</option>
-                    <option value="Mé-Zóchi">Mé-Zóchi</option>
-                    <option value="Cantagalo">Cantagalo</option>
-                    <option value="Lobata">Lobata</option>
-                    <option value="Lembá">Lembá</option>
-                    <option value="Caué">Caué</option>
-                    <option value="Região Autónoma do Príncipe">Região Autónoma do Príncipe</option>
-                </select>
-
-                <div class="flex gap-2">
-                    <button id="btnBuscar" class="btn-primary w-full">Buscar</button>
-                    <button id="btnLimpar" class="btn-secondary">Limpar</button>
-                </div>
+    <main
+      class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8"
+    >
+      <div class="md:col-span-2 space-y-6">
+        <section class="card-painel shadow-sm">
+          <h2 class="subtitulo-painel mb-4">Pesquisar no Sistema</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+            <div class="sm:col-span-1">
+              <input
+                type="text"
+                id="inputBusca"
+                placeholder="Nome da escola ou curso..."
+                class="input-custom-sm"
+              />
             </div>
+            <div class="sm:col-span-1">
+              <select id="selectRegiaoBusca" class="input-custom-sm">
+                <option value="">Todas as Regiões (STP)</option>
+                <option value="Água Grande">Água Grande</option>
+                <option value="Mé-Zóchi">Mé-Zóchi</option>
+                <option value="Cantagalo">Cantagalo</option>
+                <option value="Lobata">Lobata</option>
+                <option value="Lembá">Lembá</option>
+                <option value="Caué">Caué</option>
+                <option value="Região Autónoma do Príncipe">
+                  Região Autónoma do Príncipe
+                </option>
+              </select>
+            </div>
+            <div class="sm:col-span-1 flex gap-2">
+              <button
+                id="btnBuscar"
+                class="btn-primary flex-1 flex items-center justify-center gap-2"
+              >
+                <i class="fas fa-search"></i> Buscar
+              </button>
+              <button
+                id="btnLimpar"
+                class="btn-secondary px-4 flex items-center justify-center"
+              >
+                <i class="fas fa-eraser"></i>
+              </button>
+            </div>
+          </div>
         </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <div class="lg:col-span-2">
-                <h2 class="titulo-seccao mb-4">Instituições Encontradas</h2>
-                
-                <div id="containerCards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <p class="text-gray-500 text-center py-8">A carregar instituições...</p>
-                </div>
+        <section>
+          <h2 class="titulo-seccao mb-4">Instituições Encontradas</h2>
+          <div
+            id="containerCards"
+            class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+          ></div>
+        </section>
+      </div>
+
+      <aside class="md:col-span-1">
+        <section class="card-painel shadow-sm">
+          <h2 class="subtitulo-painel mb-4" id="tituloFormulario">
+            Gerir Instituição
+          </h2>
+
+          <form id="formGerir" class="space-y-4">
+            <div>
+              <label class="label-form">Nome da Escola</label>
+              <input
+                type="text"
+                id="inputNome"
+                required
+                placeholder="Ex: Liceu Nacional"
+                class="input-custom-sm"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="label-form">Região</label>
+                <input
+                  type="text"
+                  id="inputRegiao"
+                  required
+                  placeholder="Ex: Água Grande"
+                  class="input-custom-sm"
+                />
+              </div>
+              <div>
+                <label class="label-form">Tipo</label>
+                <input
+                  type="text"
+                  id="inputTipo"
+                  required
+                  placeholder="Ex: Secundário"
+                  class="input-custom-sm"
+                />
+              </div>
             </div>
 
             <div>
-                <h2 class="titulo-seccao mb-4">Gerir Instituição</h2>
-                <div class="card-painel">
-                    <form id="formGerir" class="space-y-4">
-                        <div>
-                            <label class="label-form">Nome da Escola</label>
-                            <input type="text" id="inputNome" class="input-custom-sm">
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="label-form">Região</label>
-                                <input type="text" id="inputRegiao" placeholder="Ex: Água Grande" class="input-custom-sm">
-                            </div>
-                            <div>
-                                <label class="label-form">Tipo</label>
-                                <input type="text" id="inputTipo" placeholder="Ex: Superior" class="input-custom-sm">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="label-form">Cursos (separados por vírgula)</label>
-                            <textarea id="txtCursos" rows="2" placeholder="Ex: Direito, Agronomia" class="input-custom-sm"></textarea>
-                        </div>
-                        <button type="submit" id="btnGuardar" class="btn-primary w-full text-sm shadow-sm">
-                            Guardar Dados
-                        </button>
-                    </form>
-                </div>
+              <label class="label-form">Cursos (Separados por Vírgula)</label>
+              <textarea
+                id="txtCursos"
+                rows="3"
+                placeholder="Ex: Ciências, Humanidades"
+                class="input-custom-sm"
+              ></textarea>
             </div>
 
-        </div>
+            <button
+              type="submit"
+              id="btnGuardar"
+              class="btn-primary w-full flex items-center justify-center gap-2"
+            >
+              <i class="fas fa-save"></i> Guardar Dados
+            </button>
+          </form>
+        </section>
+      </aside>
     </main>
 
     <script src="app.js"></script>
-</body>
+  </body>
 </html>
