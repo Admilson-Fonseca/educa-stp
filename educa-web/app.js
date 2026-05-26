@@ -5,7 +5,7 @@
  */
 
 // Definição de constantes de comunicação com o serviço e estado global
-const API_URL = 'http://localhost:5000/api/instituicoes';
+const API_URL = 'https://educa-stp.onrender.com/api/instituicoes';
 const API_KEY = 'STP_SECRET_2026'; 
 
 let idInstituicaoEmEdicao = null;
@@ -100,11 +100,11 @@ async function guardarDados(e) {
             throw new Error(respostaDados.erro || 'Falha na persistência dos dados submetidos.');
         }
 
-        alert(idInstituicaoEmEdicao ? '🎉 Atualizado com sucesso!' : '🎉 Registado com sucesso!');
+        alert(idInstituicaoEmEdicao ? ' Atualizado com sucesso!' : ' Registado com sucesso!');
         limparFormulario();
         carregarInstituicoes();
     } catch (erro) {
-        alert('❌ Erro: ' + erro.message);
+        alert('Erro: ' + erro.message);
     }
 }
 
@@ -123,14 +123,14 @@ async function eliminarInstituicao(id) {
 
         if (!resposta.ok) throw new Error('Operação de remoção rejeitada pelo serviço.');
 
-        alert('🗑️ Eliminada com sucesso!');
+        alert('Eliminada com sucesso!');
         // Se estivermos a editar a instituição que foi eliminada, limpa o formulário
         if (idInstituicaoEmEdicao === id) {
             limparFormulario();
         }
         carregarInstituicoes();
     } catch (erro) {
-        alert('❌ Erro: ' + erro.message);
+        alert(' Erro: ' + erro.message);
     }
 }
 
