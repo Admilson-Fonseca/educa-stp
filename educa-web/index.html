@@ -20,18 +20,25 @@
 
     <link rel="stylesheet" href="estilo.css" />
   </head>
-  
+
   <body class="bg-custom-main">
     <nav class="navbar shadow-md p-4">
       <div class="container mx-auto flex justify-between items-center">
         <div
-          class="flex items-center gap-2 logo text-white font-bold tracking-wide">
-          <i class="fas fa-university text-emerald-400 text-xl drop-shadow-[0_0_6px_rgba(52,211,153,0.5)]"></i>
+          class="flex items-center gap-3 logo text-white font-bold tracking-wide"
+        >
+          <img
+            src="../educa-web/imagem/brasao.png"
+            alt="Brasão EduSTP"
+            class="w-10 h-10 object-contain rounded-md shadow-sm"
+          />
           <span>Edu<span class="text-emerald-400">STP</span></span>
         </div>
-        <span class="badge-status flex items-center gap-1.5">
-          <span class="h-2 w-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-          Chave API Ativa
+
+        <span
+          class="text-xs text-white font-medium tracking-wider uppercase hidden sm:inline"
+        >
+          Portal de Consulta Institucional
         </span>
       </div>
     </nav>
@@ -112,23 +119,27 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="label-form">Região</label>
-                <input
-                  type="text"
-                  id="inputRegiao"
-                  required
-                  placeholder="Ex: Água Grande"
-                  class="input-custom-sm"
-                />
+                <select id="inputRegiao" required class="input-custom-sm">
+                  <option value="">Escolha...</option>
+                  <option value="Água Grande">Água Grande</option>
+                  <option value="Mé-Zóchi">Mé-Zóchi</option>
+                  <option value="Cantagalo">Cantagalo</option>
+                  <option value="Lobata">Lobata</option>
+                  <option value="Lembá">Lembá</option>
+                  <option value="Caué">Caué</option>
+                  <option value="Região Autónoma do Príncipe">Príncipe</option>
+                </select>
               </div>
               <div>
                 <label class="label-form">Tipo</label>
-                <input
-                  type="text"
-                  id="inputTipo"
-                  required
-                  placeholder="Ex: Secundário"
-                  class="input-custom-sm"
-                />
+                <select id="inputTipo" required class="input-custom-sm">
+                  <option value="">Escolha...</option>
+                  <option value="Ensino Superior">Ensino Superior</option>
+                  <option value="Ensino Secundário">Ensino Secundário</option>
+                  <option value="Ensino Técnico / Profissional">
+                    Técnico / Prof.
+                  </option>
+                </select>
               </div>
             </div>
 
@@ -137,7 +148,8 @@
               <textarea
                 id="txtCursos"
                 rows="3"
-                placeholder="Ex: Ciências, Humanidades"
+                required
+                placeholder="Ex: Engenharia Informática, Direito"
                 class="input-custom-sm"
               ></textarea>
             </div>
@@ -155,5 +167,24 @@
     </main>
 
     <script src="app.js"></script>
+
+    <footer class="bg-white border-t border-gray-100 mt-12 py-6">
+      <div
+        class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500"
+      >
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-emerald-600">EduSTP</span>
+          <span>&copy; 2026 — Todos os direitos reservados.</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <span>Desenvolvido por:</span>
+          <span
+            class="font-semibold text-gray-800 hover:text-blue-600 transition-colors"
+          >
+            <i class="fas fa-code mr-1 text-blue-500"></i> Admilson Bragança
+          </span>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

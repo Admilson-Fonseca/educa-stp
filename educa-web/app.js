@@ -49,7 +49,7 @@ async function carregarInstituicoes() {
     } catch (erro) {
         console.error("Transmissão interrompida:", erro);
         containerCards.innerHTML = `
-            <div class="text-center py-8">
+            <div class="col-span-1 sm:col-span-2 text-center py-8">
                 <i class="fas fa-exclamation-triangle text-red-500 text-2xl mb-2"></i>
                 <p class="text-red-500 font-medium">Erro ao carregar dados: Server Offline ou Falha na Autenticação</p>
             </div>`;
@@ -64,7 +64,7 @@ async function guardarDados(e) {
     e.preventDefault(); 
 
     const dadosForm = {
-        nome: inputNome.value,
+        nome: inputNome.value.trim(),
         regiao: inputRegiao.value,
         tipo: inputTipo.value,
         cursos: txtCursos.value.split(',').map(c => c.trim()).filter(c => c !== "")
@@ -93,9 +93,14 @@ async function guardarDados(e) {
             body: JSON.stringify(dadosForm)
         });
 
-        if (!resposta.ok) throw new Error('Falha na persistência dos dados submetidos.');
+        const respostaDados = await resposta.json();
 
-        alert(idInstituicaoEmEdicao ? '✅ Atualizado com sucesso!' : '✅ Registado com sucesso!');
+        if (!resposta.ok) {
+            // Captura mensagens de erro amigáveis vindas da validação do Mongoose backend
+            throw new Error(respostaDados.erro || 'Falha na persistência dos dados submetidos.');
+        }
+
+        alert(idInstituicaoEmEdicao ? '🎉 Atualizado com sucesso!' : '🎉 Registado com sucesso!');
         limparFormulario();
         carregarInstituicoes();
     } catch (erro) {
@@ -119,6 +124,10 @@ async function eliminarInstituicao(id) {
         if (!resposta.ok) throw new Error('Operação de remoção rejeitada pelo serviço.');
 
         alert('🗑️ Eliminada com sucesso!');
+        // Se estivermos a editar a instituição que foi eliminada, limpa o formulário
+        if (idInstituicaoEmEdicao === id) {
+            limparFormulario();
+        }
         carregarInstituicoes();
     } catch (erro) {
         alert('❌ Erro: ' + erro.message);
@@ -135,8 +144,8 @@ function prepararEdicao(id, nome, regiao, tipo, cursos) {
     inputTipo.value = tipo;
     txtCursos.value = cursos;
     
-    btnGuardar.textContent = "Atualizar Dados";
-    btnGuardar.style.backgroundColor = "#2563eb"; 
+    btnGuardar.innerHTML = `<i class="fas fa-sync-alt"></i> Atualizar Dados`;
+    btnGuardar.style.backgroundColor = "#2563eb"; // Altera para Azul de Edição
 }
 
 /**
@@ -148,7 +157,7 @@ function renderizarCards(instituicoes) {
 
     if (instituicoes.length === 0) {
         containerCards.innerHTML = `
-            <div class="col-span-2 text-center py-8">
+            <div class="col-span-1 sm:col-span-2 text-center py-8">
                 <i class="fas fa-folder-open text-gray-300 text-3xl mb-2"></i>
                 <p class="text-gray-500">Nenhuma instituição localizada no território nacional.</p>
             </div>`;
@@ -157,7 +166,16 @@ function renderizarCards(instituicoes) {
 
     instituicoes.forEach(inst => {
         const cursosBadges = inst.cursos.map(c => `<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded inline-block mr-1 mb-1"><i class="fas fa-book-reader mr-1 text-gray-400"></i>${c}</span>`).join('');
-        const corTipo = inst.tipo.toLowerCase().includes('superior') ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800';
+        
+        // Mapeamento visual estilizado por categorias de ensino de STP
+        let corTipo = 'bg-gray-100 text-gray-800';
+        if (inst.tipo === 'Ensino Superior') {
+            corTipo = 'bg-blue-100 text-blue-800';
+        } else if (inst.tipo === 'Ensino Secundário') {
+            corTipo = 'bg-amber-100 text-amber-800';
+        } else if (inst.tipo === 'Ensino Técnico / Profissional') {
+            corTipo = 'bg-emerald-100 text-emerald-800';
+        }
 
         const card = `
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
@@ -170,7 +188,7 @@ function renderizarCards(instituicoes) {
                     <div class="mt-4">${cursosBadges}</div>
                 </div>
                 <div class="flex justify-end gap-2 mt-6 border-t pt-3">
-                    <button onclick="prepararEdicao('${inst._id}', '${inst.nome}', '${inst.regiao}', '${inst.tipo}', '${inst.cursos.join(', ')}')" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                    <button onclick="prepararEdicao('${inst._id}', '${inst.nome.replace(/'/g, "\\'")}', '${inst.regiao}', '${inst.tipo}', '${inst.cursos.join(', ').replace(/'/g, "\\'")}')" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
                         <i class="fas fa-edit"></i> Editar
                     </button>
                     <button onclick="eliminarInstituicao('${inst._id}')" class="text-xs bg-red-50 text-red-700 hover:bg-red-100 font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
@@ -189,8 +207,8 @@ function renderizarCards(instituicoes) {
 function limparFormulario() {
     idInstituicaoEmEdicao = null;
     formGerir.reset();
-    btnGuardar.textContent = "Guardar Dados";
-    btnGuardar.style.backgroundColor = ""; 
+    btnGuardar.innerHTML = `<i class="fas fa-save"></i> Guardar Dados`;
+    btnGuardar.style.backgroundColor = ""; // Devolve o controle de cor para o CSS/Tailwind nativo
 }
 
 // Vinculação de escutas de eventos (Event Listeners)
@@ -202,5 +220,5 @@ btnLimpar.addEventListener('click', () => {
 });
 formGerir.addEventListener('submit', guardarDados);
 
-// Inicialização automatizada da interface
+// Inicialização automatizada da interface ao carregar o ecossistema
 window.onload = carregarInstituicoes;
