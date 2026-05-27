@@ -2,6 +2,7 @@
  * @file server.js
  * @description Ponto de entrada da API RESTful para o ecossistema EduSTP com documentação Swagger.
  * @course Web Services - Engenharia Informática
+ * @author Admilson Fonseca
  */
 
 const express = require('express');
@@ -28,7 +29,7 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "Serviço Web para o mapeamento e consulta do sistema educativo (ensino secundário e superior) de São Tomé e Príncipe.",
             contact: {
-                name: "Admilson Bragança"
+                name: "Admilson Fonseca"
             }
         },
         servers: [
@@ -86,25 +87,25 @@ const swaggerOptions = {
         paths: {
             "/api/instituicoes": {
                 "get": {
-                    "summary": "Listagem Geral e Procura Filtrada",
-                    "description": "Obtém a coleção completa de instituições de ensino de São Tomé e Príncipe, permitindo filtragem opcional por texto parcial (nome/cursos) ou região administrativa.",
+                    "summary": "Listar todas as instituições ou pesquisar",
+                    "description": "Retorna a lista completa de instituições de ensino de São Tomé e Príncipe. Permite fazer buscas por texto (nome/curso) ou filtrar por região.",
                     "parameters": [
                         {
                             "in": "query",
                             "name": "busca",
                             "schema": { "type": "string" },
-                            "description": "Expressão de busca para filtrar por nome da escola ou curso (case-insensitive)."
+                            "description": "Texto para pesquisar por nome da escola ou nome do curso."
                         },
                         {
                             "in": "query",
                             "name": "regiao",
                             "schema": { "type": "string" },
-                            "description": "Região exata de STP (ex. Água Grande, Mé-Zóchi, Príncipe)."
+                            "description": "Filtro por distrito ou região exata (ex: Água Grande, Cantagalo, Príncipe)."
                         }
                     ],
                     "responses": {
                         "200": {
-                            "description": "Vetor de dados com as instituições localizadas retornado com sucesso.",
+                            "description": "Lista de instituições encontrada e retornada com sucesso.",
                             "content": {
                                 "application/json": {
                                     "schema": {
@@ -115,12 +116,12 @@ const swaggerOptions = {
                             }
                         },
                         "401": { "description": "Chave de API inválida ou ausente no cabeçalho X-API-Key." },
-                        "500": { "description": "Erro interno no processamento ou varredura do banco de dados." }
+                        "500": { "description": "Erro interno ao tentar processar a consulta no banco de dados." }
                     }
                 },
                 "post": {
-                    "summary": "Persistência de Novas Entidades",
-                    "description": "Cadastra uma nova instituição de ensino na base de dados centralizada do sistema EduSTP.",
+                    "summary": "Cadastrar uma nova instituição",
+                    "description": "Adiciona uma nova escola ou universidade à base de dados do sistema EduSTP.",
                     "requestBody": {
                         "required": true,
                         "content": {
@@ -131,55 +132,55 @@ const swaggerOptions = {
                     },
                     "responses": {
                         "201": {
-                            "description": "Instituição registada e persistida com sucesso.",
+                            "description": "Instituição cadastrada e salva com sucesso.",
                             "content": {
                                 "application/json": {
                                     "schema": { "$ref": "#/components/schemas/Instituicao" }
                                 }
                             }
                         },
-                        "400": { "description": "Dados fornecidos inválidos ou em incumprimento com os Enums geográficos/académicos." },
-                        "401": { "description": "Falha na autenticação via cabeçalho." }
+                        "400": { "description": "Dados inválidos. Verifique se a região ou o tipo de ensino estão corretos." },
+                        "401": { "description": "Chave de API inválida ou ausente no cabeçalho X-API-Key." }
                     }
                 }
             },
             "/api/instituicoes/{id}": {
                 "get": {
-                    "summary": "Consulta Singular por Identificador Único",
-                    "description": "Localiza e retorna o objeto descritivo de uma única instituição com base no ID fornecido no caminho do URL.",
+                    "summary": "Buscar uma instituição pelo ID",
+                    "description": "Retorna os detalhes de uma escola ou universidade específica usando o ID gerado pelo banco de dados.",
                     "parameters": [
                         {
                             "in": "path",
                             "name": "id",
                             "required": true,
                             "schema": { "type": "string" },
-                            "description": "ID da instituição a procurar."
+                            "description": "ID único da instituição a ser procurada."
                         }
                     ],
                     "responses": {
                         "200": {
-                            "description": "Recurso localizado e extraído com sucesso.",
+                            "description": "Instituição encontrada com sucesso.",
                             "content": {
                                 "application/json": {
                                     "schema": { "$ref": "#/components/schemas/Instituicao" }
                                 }
                             }
                         },
-                        "401": { "description": "Autenticação perimetral falhou." },
-                        "404": { "description": "Nenhum documento correspondente ao ID fornecido foi encontrado." },
-                        "500": { "description": "Erro inesperado na extração dos dados pelo ID." }
+                        "401": { "description": "Chave de API inválida ou ausente (Não autorizado)." },
+                        "404": { "description": "Nenhuma instituição foi encontrada com o ID informado." },
+                        "500": { "description": "Erro interno ao tentar processar a requisição." }
                     }
                 },
                 "put": {
-                    "summary": "Atualização Integral ou Parcial de Registos",
-                    "description": "Atualiza os metadados estruturais de uma instituição existente mapeada através do seu ID único (ObjectId).",
+                    "summary": "Editar dados de uma instituição",
+                    "description": "Atualiza as informações de uma instituição existente mapeada pelo seu ID.",
                     "parameters": [
                         {
                             "in": "path",
                             "name": "id",
                             "required": true,
                             "schema": { "type": "string" },
-                            "description": "ID único do documento gerado no MongoDB."
+                            "description": "ID único da instituição que vai ser editada."
                         }
                     ],
                     "requestBody": {
@@ -192,45 +193,45 @@ const swaggerOptions = {
                     },
                     "responses": {
                         "200": {
-                            "description": "Documento atualizado com sucesso retornando os novos dados.",
+                            "description": "Dados da instituição atualizados com sucesso.",
                             "content": {
                                 "application/json": {
                                     "schema": { "$ref": "#/components/schemas/Instituicao" }
                                 }
                             }
                         },
-                        "400": { "description": "Identificador malformado ou erro de validação nos campos alterados." },
-                        "401": { "description": "Cabeçalho de autorização inválido." }
+                        "400": { "description": "ID inválido ou dados enviados fora do padrão do sistema." },
+                        "401": { "description": "Chave de API inválida ou ausente no cabeçalho X-API-Key." }
                     }
                 },
                 "delete": {
-                    "summary": "Supressão Crítica de Registos",
-                    "description": "Remove permanentemente uma instituição do ecossistema a partir do seu ID único recebido como parâmetro de rota.",
+                    "summary": "Eliminar uma instituição",
+                    "description": "Remove permanentemente uma escola ou universidade do sistema usando o ID.",
                     "parameters": [
                         {
                             "in": "path",
                             "name": "id",
                             "required": true,
                             "schema": { "type": "string" },
-                            "description": "ID correspondente ao documento a ser eliminado."
+                            "description": "ID único da instituição que vai ser removida."
                         }
                     ],
                     "responses": {
                         "200": {
-                            "description": "Registo expurgado com sucesso.",
+                            "description": "Instituição removida com sucesso do sistema.",
                             "content": {
                                 "application/json": {
                                     "schema": {
                                         "type": "object",
                                         "properties": {
-                                            "mensagem": { "type": "string", "example": "Entidade removida com sucesso da base de dados." }
+                                            "mensagem": { type: "string", example: "Instituição removida com sucesso da base de dados." }
                                         }
                                     }
                                 }
                             }
                         },
-                        "401": { "description": "Credencial X-API-Key ausente ou inválida." },
-                        "500": { "description": "Exceção na base de dados ao tentar excluir o registo." }
+                        "401": { "description": "Chave de API inválida ou ausente no cabeçalho X-API-Key." },
+                        "500": { "description": "Erro interno ao tentar eliminar o registo." }
                     }
                 }
             }
@@ -324,7 +325,6 @@ app.post('/api/instituicoes', verificarApiKey, async (req, res) => {
     await novaInstituicao.save();
     res.status(201).json(novaInstituicao);
   } catch (erro) {
-    // Se falhar a validação do Enum, devolvemos o erro descritivo ao cliente
     if (erro.name === 'ValidationError') {
       return res.status(400).json({ erro: erro.message });
     }
@@ -349,7 +349,7 @@ app.put('/api/instituicoes/:id', verificarApiKey, async (req, res) => {
 app.delete('/api/instituicoes/:id', verificarApiKey, async (req, res) => {
   try {
     await Instituicao.findByIdAndDelete(req.params.id);
-    res.json({ mensagem: 'Entidade removida com sucesso da base de dados.' });
+    res.json({ mensagem: 'Instituição removida com sucesso da base de dados.' });
   } catch (erro) {
     res.status(500).json({ erro: 'Erro interno ao tentar remover o registo especificado.' });
   }
