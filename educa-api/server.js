@@ -1,6 +1,6 @@
 /**
  * @file server.js
- * @description Ponto de entrada da API RESTful para o ecossistema EduSTP com documentação Swagger.
+ * @description Ponto de entrada da API RESTful para o sistema EduSTP com documentação Swagger.
  * @course Web Services - Engenharia Informática
  * @author Admilson Fonseca
  */
@@ -10,24 +10,24 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-// --- Importação das Dependências do Swagger ---
+// --- Configuração da Documentação do Swagger ---
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 
 const app = express();
 
-// Configuração de Middlewares Globais de Ciclo de Vida HTTP
+// Configuração de Middlewares Globais
 app.use(cors());
 app.use(express.json());
 
-// --- Configuração dos Metadados Globais e Rotas do Swagger (OpenAPI 3.0) ---
+// --- Configuração das Informações Gerais do Swagger (OpenAPI 3.0) ---
 const swaggerOptions = {
     swaggerDefinition: {
         openapi: "3.0.0",
         info: {
             title: "API EduSTP - Sistema de Consulta Educacional de São Tomé e Príncipe",
             version: "1.0.0",
-            description: "Serviço Web para o mapeamento e consulta do sistema educativo (ensino secundário e superior) de São Tomé e Príncipe.",
+            description: "Serviço Web para mapeamento e consulta do sistema de ensino (secundário e superior) de São Tomé e Príncipe.",
             contact: {
                 name: "Admilson Fonseca"
             }
@@ -44,7 +44,7 @@ const swaggerOptions = {
                     type: "apiKey",
                     in: "header",
                     name: "X-API-Key",
-                    description: "Chave de segurança (API Key) obrigatória para validar o consumo dos recursos."
+                    description: "Chave de segurança obrigatória para autorizar o consumo dos recursos da API."
                 }
             },
             schemas: {
@@ -52,7 +52,7 @@ const swaggerOptions = {
                     type: "object",
                     required: ["nome", "regiao", "tipo", "cursos"],
                     properties: {
-                        id: { type: "string", description: "ID único gerado pelo MongoDB" },
+                        id: { type: "string", description: "ID único gerado automaticamente pelo MongoDB" },
                         nome: { type: "string", example: "USTP - Faculdade de Ciências e Tecnologias (FCT)" },
                         regiao: { 
                             type: "string", 
@@ -74,7 +74,7 @@ const swaggerOptions = {
                 Erro: {
                     type: "object",
                     properties: {
-                        erro: { type: "string", example: "Mensagem descritiva do erro ocorrido." }
+                        erro: { type: "string", example: "Mensagem descritiva do erro que ocorreu." }
                     }
                 }
             }
@@ -88,24 +88,24 @@ const swaggerOptions = {
             "/api/instituicoes": {
                 "get": {
                     "summary": "Listar todas as instituições ou pesquisar",
-                    "description": "Retorna a lista completa de instituições de ensino de São Tomé e Príncipe. Permite fazer buscas por texto (nome/curso) ou filtrar por região.",
+                    "description": "Retorna a lista completa de instituições de ensino cadastradas em São Tomé e Príncipe. Permite fazer pesquisas por texto ou filtrar por região.",
                     "parameters": [
                         {
                             "in": "query",
                             "name": "busca",
                             "schema": { "type": "string" },
-                            "description": "Texto para pesquisar por nome da escola ou nome do curso."
+                            "description": "Texto livre para pesquisar pelo nome da escola ou pelos cursos."
                         },
                         {
                             "in": "query",
                             "name": "regiao",
                             "schema": { "type": "string" },
-                            "description": "Filtro por distrito ou região exata (ex: Água Grande, Cantagalo, Príncipe)."
+                            "description": "Filtro pelo distrito ou região de STP (ex: Água Grande, Cantagalo, Príncipe)."
                         }
                     ],
                     "responses": {
                         "200": {
-                            "description": "Lista de instituições encontrada e retornada com sucesso.",
+                            "description": "Lista de instituições retornada com sucesso.",
                             "content": {
                                 "application/json": {
                                     "schema": {
@@ -116,12 +116,12 @@ const swaggerOptions = {
                             }
                         },
                         "401": { "description": "Chave de API inválida ou ausente no cabeçalho X-API-Key." },
-                        "500": { "description": "Erro interno ao tentar processar a consulta no banco de dados." }
+                        "500": { "description": "Erro interno ao tentar aceder ao banco de dados." }
                     }
                 },
                 "post": {
-                    "summary": "Cadastrar uma nova instituição",
-                    "description": "Adiciona uma nova escola ou universidade à base de dados do sistema EduSTP.",
+                    "summary": "Adicionar uma nova instituição",
+                    "description": "Insere uma nova escola ou universidade no banco de dados do sistema.",
                     "requestBody": {
                         "required": true,
                         "content": {
@@ -132,29 +132,29 @@ const swaggerOptions = {
                     },
                     "responses": {
                         "201": {
-                            "description": "Instituição cadastrada e salva com sucesso.",
+                            "description": "Instituição gravada com sucesso.",
                             "content": {
                                 "application/json": {
                                     "schema": { "$ref": "#/components/schemas/Instituicao" }
                                 }
                             }
                         },
-                        "400": { "description": "Dados inválidos. Verifique se a região ou o tipo de ensino estão corretos." },
+                        "400": { "description": "Dados inválidos. Verifique as regras de validação do modelo." },
                         "401": { "description": "Chave de API inválida ou ausente no cabeçalho X-API-Key." }
                     }
                 }
             },
             "/api/instituicoes/{id}": {
                 "get": {
-                    "summary": "Buscar uma instituição pelo ID",
-                    "description": "Retorna os detalhes de uma escola ou universidade específica usando o ID gerado pelo banco de dados.",
+                    "summary": "Procurar uma instituição pelo ID",
+                    "description": "Retorna as informações detalhadas de uma única instituição com base no ID fornecido na URL.",
                     "parameters": [
                         {
                             "in": "path",
                             "name": "id",
                             "required": true,
                             "schema": { "type": "string" },
-                            "description": "ID único da instituição a ser procurada."
+                            "description": "ID exclusivo da instituição que pretende encontrar."
                         }
                     ],
                     "responses": {
@@ -166,21 +166,21 @@ const swaggerOptions = {
                                 }
                             }
                         },
-                        "401": { "description": "Chave de API inválida ou ausente (Não autorizado)." },
-                        "404": { "description": "Nenhuma instituição foi encontrada com o ID informado." },
-                        "500": { "description": "Erro interno ao tentar processar a requisição." }
+                        "401": { "description": "Chave de API inválida ou ausente no cabeçalho X-API-Key." },
+                        "404": { "description": "Nenhuma instituição encontrada com o ID fornecido." },
+                        "500": { "description": "Erro interno do servidor ao processar o pedido." }
                     }
                 },
                 "put": {
-                    "summary": "Editar dados de uma instituição",
-                    "description": "Atualiza as informações de uma instituição existente mapeada pelo seu ID.",
+                    "summary": "Atualizar dados de uma instituição",
+                    "description": "Modifica os dados de uma instituição de ensino já existente usando o seu ID.",
                     "parameters": [
                         {
                             "in": "path",
                             "name": "id",
                             "required": true,
                             "schema": { "type": "string" },
-                            "description": "ID único da instituição que vai ser editada."
+                            "description": "ID da instituição que vai ser atualizada."
                         }
                     ],
                     "requestBody": {
@@ -193,32 +193,32 @@ const swaggerOptions = {
                     },
                     "responses": {
                         "200": {
-                            "description": "Dados da instituição atualizados com sucesso.",
+                            "description": "Instituição atualizada com sucesso.",
                             "content": {
                                 "application/json": {
                                     "schema": { "$ref": "#/components/schemas/Instituicao" }
                                 }
                             }
                         },
-                        "400": { "description": "ID inválido ou dados enviados fora do padrão do sistema." },
+                        "400": { "description": "ID em formato errado ou erro de validação nos campos modificados." },
                         "401": { "description": "Chave de API inválida ou ausente no cabeçalho X-API-Key." }
                     }
                 },
                 "delete": {
-                    "summary": "Eliminar uma instituição",
-                    "description": "Remove permanentemente uma escola ou universidade do sistema usando o ID.",
+                    "summary": "Remover uma instituição",
+                    "description": "Apaga de forma permanente uma instituição do banco de dados através do seu ID.",
                     "parameters": [
                         {
                             "in": "path",
                             "name": "id",
                             "required": true,
                             "schema": { "type": "string" },
-                            "description": "ID único da instituição que vai ser removida."
+                            "description": "ID da instituição que deseja apagar."
                         }
                     ],
                     "responses": {
                         "200": {
-                            "description": "Instituição removida com sucesso do sistema.",
+                            "description": "Registo removido com sucesso.",
                             "content": {
                                 "application/json": {
                                     "schema": {
@@ -231,7 +231,7 @@ const swaggerOptions = {
                             }
                         },
                         "401": { "description": "Chave de API inválida ou ausente no cabeçalho X-API-Key." },
-                        "500": { "description": "Erro interno ao tentar eliminar o registo." }
+                        "500": { "description": "Erro interno ao tentar remover a instituição." }
                     }
                 }
             }
@@ -241,15 +241,15 @@ const swaggerOptions = {
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-// Rota UI dinâmica para renderizar o painel interativo da API
+// Configuração da rota para a interface visual do Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// Conexão à Camada de Persistência (MongoDB Atlas)
+// Conexão ao banco de dados (MongoDB Atlas na nuvem)
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log(' Conexão ao MongoDB estabelecida com sucesso!'))
-  .catch(err => console.error(' Falha na inicialização da conexão ao MongoDB:', err));
+  .catch(err => console.error(' Falha ao ligar ao MongoDB:', err));
 
-// --- Definição do Esquema (Schema) com Validação por ENUMs ---
+// --- Criação do Modelo (Schema) com Validações ---
 const InstituicaoSchema = new mongoose.Schema({
   nome: { 
     type: String, 
@@ -280,22 +280,22 @@ const InstituicaoSchema = new mongoose.Schema({
 const Instituicao = mongoose.model('Instituicao', InstituicaoSchema);
 
 /**
- * Middleware de Segurança Perimetral
+ * Middleware para Verificação da API Key
  */
 const verificarApiKey = (req, res, next) => {
   const chaveCliente = req.header('X-API-Key'); 
   
   if (!chaveCliente || chaveCliente !== process.env.API_KEY) {
-    return res.status(401).json({ erro: 'Acesso negado. Credencial API Key inválida ou ausente.' });
+    return res.status(401).json({ erro: 'Acesso negado. Chave de API inválida ou ausente.' });
   }
   next(); 
 };
 
 // ==========================================
-// DEFINIÇÃO DOS ENDPOINTS DA API (CRUD)
+// ROTAS DO CONTROLADOR DA API (CRUD)
 // ==========================================
 
-// Endpoint: Listagem Geral e Procura Filtrada
+// Rota: Listar e Filtrar Instituições
 app.get('/api/instituicoes', verificarApiKey, async (req, res) => {
   try {
     const { busca, regiao } = req.query;
@@ -314,11 +314,11 @@ app.get('/api/instituicoes', verificarApiKey, async (req, res) => {
     const resultados = await Instituicao.find(filtro);
     res.json(resultados);
   } catch (erro) {
-    res.status(500).json({ erro: 'Erro interno ao processar a consulta.' });
+    res.status(500).json({ erro: 'Erro interno ao processar a pesquisa.' });
   }
 });
 
-// Endpoint: Persistência de Novas Entidades (Validada pelo Mongoose)
+// Rota: Criar Nova Instituição
 app.post('/api/instituicoes', verificarApiKey, async (req, res) => {
   try {
     const novaInstituicao = new Instituicao(req.body);
@@ -328,11 +328,11 @@ app.post('/api/instituicoes', verificarApiKey, async (req, res) => {
     if (erro.name === 'ValidationError') {
       return res.status(400).json({ erro: erro.message });
     }
-    res.status(400).json({ erro: 'Dados de submissão inconsistentes com as restrições do modelo.' });
+    res.status(400).json({ erro: 'Dados enviados não respeitam o formato exigido.' });
   }
 });
 
-// Endpoint: Atualização Integral ou Parcial de Registos
+// Rota: Editar Instituição Existente
 app.put('/api/instituicoes/:id', verificarApiKey, async (req, res) => {
   try {
     const updated = await Instituicao.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
@@ -341,31 +341,31 @@ app.put('/api/instituicoes/:id', verificarApiKey, async (req, res) => {
     if (erro.name === 'ValidationError') {
       return res.status(400).json({ erro: erro.message });
     }
-    res.status(400).json({ erro: 'Falha na mutação dos dados ou identificador inválido.' });
+    res.status(400).json({ erro: 'Não foi possível atualizar. Verifique os dados ou o ID.' });
   }
 });
 
-// Endpoint: Supressão Crítica de Registos
+// Rota: Excluir uma Instituição
 app.delete('/api/instituicoes/:id', verificarApiKey, async (req, res) => {
   try {
     await Instituicao.findByIdAndDelete(req.params.id);
     res.json({ mensagem: 'Instituição removida com sucesso da base de dados.' });
   } catch (erro) {
-    res.status(500).json({ erro: 'Erro interno ao tentar remover o registo especificado.' });
+    res.status(500).json({ erro: 'Erro interno ao tentar remover a instituição.' });
   }
 });
 
-// Endpoint: Consulta Singular por Identificador Único
+// Rota: Buscar uma única instituição por ID
 app.get('/api/instituicoes/:id', verificarApiKey, async (req, res) => {
   try {
     const instituicao = await Instituicao.findById(req.params.id);
-    if (!instituicao) return res.status(404).json({ erro: 'O recurso solicitado não foi localizado.' });
+    if (!instituicao) return res.status(404).json({ erro: 'A instituição solicitada não foi encontrada.' });
     res.json(instituicao);
   } catch (erro) {
-    res.status(500).json({ erro: 'Erro interno na extração dos metadados do recurso.' });
+    res.status(500).json({ erro: 'Erro interno ao procurar a instituição.' });
   }
 });
 
-// Inicialização do Escutador de Eventos de Rede da Aplicação
+// Inicialização do Servidor Express
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(` Serviço HTTP ativo e operacional na porta ${PORT}`));
+app.listen(PORT, () => console.log(` Servidor ativo e a correr na porta ${PORT}`));
