@@ -21,6 +21,7 @@ app.use(cors());
 app.use(express.json());
 
 // --- Configuração das Informações Gerais do Swagger (OpenAPI 3.0) ---
+// No teu server.js, localiza as swaggerOptions:
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
@@ -29,12 +30,16 @@ const swaggerOptions = {
         "API EduSTP - Sistema de Consulta Educacional de São Tomé e Príncipe",
       version: "1.0.0",
       description:
-        "Serviço Web para mapeamento e consulta do sistema de ensino (secundário e superior) de São Tomé e Príncipe.",
+        "Serviço Web para mapeamento e consulta do sistema de ensino...",
       contact: {
         name: "Admilson Fonseca",
       },
     },
     servers: [
+      {
+        url: "https://educa-stp.onrender.com",
+        description: "Servidor de Produção (Render)",
+      },
       {
         url: `http://localhost:${process.env.PORT || 5000}`,
         description: "Servidor de Desenvolvimento Local",
@@ -412,11 +417,9 @@ app.post("/api/instituicoes", verificarApiKey, async (req, res) => {
       nome: { $regex: `^${nome}$`, $options: "i" },
     });
     if (instituicaoExistente) {
-      return res
-        .status(400)
-        .json({
-          erro: "Esta instituição já se encontra registada no sistema.",
-        });
+      return res.status(400).json({
+        erro: "Esta instituição já se encontra registada no sistema.",
+      });
     }
 
     const novaInstituicao = new Instituicao(req.body);
@@ -445,11 +448,9 @@ app.put("/api/instituicoes/:id", verificarApiKey, async (req, res) => {
     if (erro.name === "ValidationError") {
       return res.status(400).json({ erro: erro.message });
     }
-    res
-      .status(400)
-      .json({
-        erro: "Não foi possível atualizar. Verifique os dados ou o ID.",
-      });
+    res.status(400).json({
+      erro: "Não foi possível atualizar. Verifique os dados ou o ID.",
+    });
   }
 });
 
