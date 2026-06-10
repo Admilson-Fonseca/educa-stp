@@ -5,10 +5,10 @@
  * @author Admilson Fonseca
  */
 
-const express = require("express");
+const express = require("express"); 
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+require("dotenv").config(); 
 
 // --- Configuração da Documentação do Swagger ---
 const swaggerUi = require("swagger-ui-express");
@@ -21,7 +21,7 @@ app.use(cors());
 app.use(express.json());
 
 // --- Configuração das Informações Gerais do Swagger (OpenAPI 3.0) ---
-// No teu server.js, localiza as swaggerOptions:
+// No meu server.js, localiza as swaggerOptions:
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
