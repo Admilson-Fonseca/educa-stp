@@ -5,10 +5,10 @@
  * @author Admilson Fonseca
  */
 
-const express = require("express"); 
+const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config(); 
+require("dotenv").config();
 
 // --- Configuração da Documentação do Swagger ---
 const swaggerUi = require("swagger-ui-express");
